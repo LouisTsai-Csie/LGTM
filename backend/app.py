@@ -20,3 +20,6 @@ app.add_middleware(
 app.include_router(user_router, prefix=f'{path}/user')
 app.include_router(group_router, prefix=f'{path}/group')
 app.include_router(common_router, prefix=f'{path}/common')
+
+if __name__=='__main__':
+    app.run(host="0.0.0.0", port=8000)
