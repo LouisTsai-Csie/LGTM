@@ -18,33 +18,38 @@ import {
 } from '../../utils/user';
 
 
-function IntroData() {
+function IntroData(props) {
     const [name, setName] = useState('');
     const [groupNum, setGroupNum] = useState('');
     const [code, setCode] = useState("print('Hello world!')");
     const [language, setLanguage] = useState(['python', 'C', 'C++']);
     const [image, setImage] = useState('https://bit.ly/dan-abramov');
+    const [token, setToken] = useState(null);
 
-    // useEffect(async()=>{
-    //     const jwt = '';
-    //     if(!jwt) return;
-    //     const result = await userProfile(jwt);
+    
+    const getUserProfile = async(jwtToken)=>{
+        if(!jwtToken) return;
 
-    //     switch(result.error) {
-    //         case 'SERVER_ERROR':
-    //             break;
-    //         case 'JWT_EXPIRE':
-    //             break;
-    //         default:
-    //             // const {picLink, username} = result.data;
-    //             // setName(username);
-    //             // setImage(picLink);
-    //             break;
-    //     } 
-    //     return;
-    // }, []);
+        const result = await userProfile(jwtToken);
+
+        if(result.detail) return;
+        
+        console.log(result.data.data.user)
+        const {name, pickLink} = result.data.data.user;
+        console.log(pickLink);
+        setName(name);
+        setImage(pickLink);
+        return;
+    }
+
+
+    useEffect(()=>{
+        setToken((_)=>props.token);
+        getUserProfile(props.token);
+    }, [props.token]);
 
     function getLanguageBadge() {
+        if(token===null) return;
         const color = ['green', 'blackAlpha', 'orange', 'teal'];
         return language.map((item, index)=>(
             <Badge colorScheme={
@@ -60,10 +65,10 @@ function IntroData() {
     <Card direction='row' width='100%'>
         <CardBody>
         <Avatar name='Dan Abrahmov' src={image} marginBottom="10px"/>
-        <Text marginBottom="5px">Name: {name}</Text>
-        <Text marginBottom="5px">Group Number: {groupNum}</Text>
-        <Code marginBottom="5px">{code}</Code>
-        <Text marginBottom="10px">Language</Text>
+        <Text marginBottom="5px">{token===null? "Please Login First":"Name: "+name}</Text>
+        <Text marginBottom="5px">{token===null? "":"Group Number: "+groupNum}</Text>
+        <Code marginBottom="5px">{token===null? "":code}</Code>
+        <Text marginBottom="10px">{token===null? "": "language"}</Text>
         <Stack spacing={4} direction='row' wrap="wrap">
             {
                 getLanguageBadge()

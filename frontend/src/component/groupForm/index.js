@@ -15,6 +15,7 @@ import {
 
 import { 
     Fragment,
+    useEffect,
     useState
 } from "react";
 
@@ -24,10 +25,12 @@ import {
     createGroup
 } from '../../utils/group';
 
-function GroupForm() {
+
+
+function GroupForm(props) {
     const [name, setName]                 = useState('');
     const [tag, setTag]                   = useState('');
-    const [type, setType]                 = useState(1);
+    const [type, setType]                 = useState("0");
     const [maxiNum, setMaxiNum]           = useState(-1);
     const [restriction, setRestriction]   = useState(0);
     const [picLink, setPicLink]           = useState('');
@@ -37,6 +40,8 @@ function GroupForm() {
 
     const {isOpen, onOpen, onClose} = useDisclosure();
 
+    
+
     async function checkFormData() {
         if(!name) {
             setTitle('Invalid Data Format')
@@ -44,39 +49,42 @@ function GroupForm() {
             onOpen();
             return;
         }
+        
+        const tags = tag.split(',');
 
-        console.log(tag.split(','));
-        const jwt = '';
+        let result = await createGroup(
+            name, 
+            tags,
+            parseInt(type), 
+            maxiNum, 
+            restriction, 
+            picLink, 
+            description, 
+            props.token
+        );
 
-        let result = createGroup({
-            name: name, 
-            tag: tag.split(','), 
-            type: type, 
-            maxiNum: maxiNum, 
-            restriction: restriction, 
-            picLink: picLink, 
-            description: description
-        }, jwt);
-
-        switch(result.error) {
-            case 'FAIL_CREATING_GROUP':
-                setTitle('Fail to create group');
-                setContent('Please try again later');
-                break;
-            default:
-                setTitle('Success to create group');
-                setContent('Please check your new group');
-                break;
+        if(result.detail){
+            setTitle('Fail To Create Group');
+            setContent('Please Try Again Later');
+            return;
+        }else{
+            setTitle('Success To Create Group');
+            setContent('Please Check Your New Group');
         }
+
         onOpen();
+
+
+
         return;
     }
 
+
     return (
         <Fragment>
-            <AlertLog isOpen={isOpen} onOpen={onOpen} onClose={onClose} title={title} content={content}/>
+            <AlertLog isOpen={isOpen} onOpen={onClose} onClose={onClose} title={title} content={content}/>
             <Stack direction="column" width="100%" align="center">
-              <FormControl isRequired width="90%">
+              <FormControl width="90%">
                 <FormLabel marginTop="10px" width="50%">1. Group Name</FormLabel>
                 <Input placeholder='Enter Group Name' width="100%" onChange={(e)=>setName(e.target.value)}/>
                 
@@ -85,11 +93,11 @@ function GroupForm() {
                 <FormHelperText>Please enter the group tag split by comma. ex: tag1,tag2,tag3,tag4,...</FormHelperText>
                 
                 <FormLabel marginTop="20px" width="50%">3. Group Restriction</FormLabel>
-                <RadioGroup onChange={(e)=>setType('')} value={type}>
+                <RadioGroup onChange={setType} value={type}>
                     <Stack spacing={4} direction='row'>
-                        <Radio value={1}>All People Can Join</Radio>
-                        <Radio value={2}>Only Those with Invitation</Radio>
-                        <Radio value={3}>Only I Can Join</Radio>
+                        <Radio value="0">Only Those with Invitation</Radio>
+                        <Radio value="1">All People Can Join</Radio>
+                        <Radio value="2">Only I Can Join</Radio>
                     </Stack>
                 </RadioGroup>
                 <FormHelperText>Choose the way others can join the group.</FormHelperText>

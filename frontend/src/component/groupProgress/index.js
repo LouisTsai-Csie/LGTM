@@ -14,23 +14,21 @@ import {
     StyledLink
 } from './style';
 
-function GroupProgress() {
-    const [groupName, setGroupName]     = useState('OO');
-    const [solvedNum, setSolvedNum]     = useState(100);
-    const [unsolvedNum, setUnsolvedNum] = useState(20);
+function GroupProgress(props) {
+    const {ticket, name, solved, total} = props;
 
     return (
-        <StyledLink to="/grouppage">
+        <StyledLink to={`/grouppage?group=${ticket}`} onClick={()=>{props.setTicket(ticket)}}>
         <Card direction='row' width='100%' align='center' marginTop="10px">
             <Stack direction='column' align='center' justify="center" margin="5px 5px 5px 5px" width="100px">
                 <Heading size="sm">Group</Heading>
-                <Text>{groupName}</Text>
+                <Text>{name}</Text>
             </Stack>
             <Stack direction='column' align='center' justify="center" width="150px">
-                <Text size="sm">solved: {solvedNum}</Text>
-                <Text size="sm">unsolved: {unsolvedNum}</Text>
+                <Text size="sm">solved: {solved}</Text>
+                <Text size="sm">unsolved: {total-solved}</Text>
             </Stack>
-            <CircularProgress value={(100*solvedNum)/(solvedNum+unsolvedNum)} size='30px' margin="5px 5px 5px" width="40px" align="center"/>
+            <CircularProgress value={(100*solved)/(total)} size='30px' margin="5px 5px 5px" width="40px" align="center"/>
         </Card>
         </StyledLink>
     )

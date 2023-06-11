@@ -8,7 +8,8 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  useState
+  useState,
+  useEffect
 } from 'react';
 
 import { 
@@ -35,8 +36,73 @@ import IntroData from '../../component/introData';
 import Footer from '../../component/footer';
 import GroupInfo from '../../component/groupInfo';
 
+import {
+  getAllGroup
+} from '../../utils/group';
+
+import {
+  userStatus
+} from '../../utils/user';
+
 function Menu() {
-  const [page, setPage] = useState(1);
+  const [progress, setProgress] = useState([]);
+  const [group, setGroup] = useState([]);
+  const [page, setPage] = useState(0);
+  const [token, setToken] = useState(null);
+
+  async function getGroups() {
+    if(page===undefined || page===null) return;
+    let result = await getAllGroup(page);
+    console.log(result.data.data.group);
+    setGroup(result.data.data.group);
+    setPage(result.data.data.pages);
+    return;
+  }
+
+  async function getUserStatus(jwtToken) {
+    const result = await userStatus(jwtToken);
+    setProgress(result.data.data.status);
+    return;
+  }
+
+  useEffect(()=>{
+    const jwtToken = localStorage.getItem("jwtToken");
+    getGroups();
+    if(!jwtToken){
+      alert('Please Login First');
+      setProgress([]);
+      return;
+    }
+    setToken((_)=>jwtToken);
+    getUserStatus(jwtToken);
+  }, [token]);
+
+  const getGroupCards = () => {
+    return group.map((item)=>{
+      return <GroupCard 
+        key={item['ticket']}
+        ticket={item['ticket']}
+        name={item['name']}
+        tag={item['tags']}
+        types={item['types']}
+        picLink={item['picLink']}
+        memNum={item['memNum']}
+        token={localStorage.getItem("jwtToken")}
+      />
+    })
+  }
+
+  const getGroupProgress = () => {
+    return progress.map((item)=>{
+      return <GroupProgress 
+        key={item['ticket']}
+        ticket={item['ticket']}
+        name={item['name']}
+        solved={item['solved']}
+        total={item['total']}
+      />
+    })  
+  }
 
   return (
     <div>
@@ -45,9 +111,9 @@ function Menu() {
         <SideBar>
           <SideBarWrapper>
             <StyledLink to="/">
-            <Image src='https://bit.ly/dan-abramov' width="100%" height="100%" objectFit="cover"/>
+            <Image src='https://i.imgur.com/c4umajd.jpg' width="100%" height="100%" objectFit="contain"/>
             </StyledLink>
-            <GroupInfo />
+            <GroupInfo setGroup={setGroup} token={localStorage.getItem("jwtToken")}/>
           </SideBarWrapper>
         </SideBar>
         <Content>
@@ -61,28 +127,23 @@ function Menu() {
               <IconButton
                 width="10%"
                 height="80%"
-                colorScheme='blackAlpha' icon={<SearchIcon />} size="sm"/>
+                colorScheme='blackAlpha' icon={<SearchIcon />} size="sm" variant="outline"/>
             </Stack>
             <Stack direction="column" width="100%" align="center" overflow="auto">
-            <GroupCard type={1}/>
-            <GroupCard type={2}/>
-            <GroupCard />
-            <GroupCard />
-            <GroupCard />
-            </Stack>
-            <Stack spacing={4} direction="row" width="100%" align="center" justify="center">
-              <Button colorScheme='blackAlpha'>Prev</Button>
-              <Text Color="black">{page}</Text>
-              <Button colorScheme='blackAlpha'>Next</Button>
+            {
+              getGroupCards()
+            }
             </Stack>
           </Stack>
         </Content>
         <SideInfo>
           <SideInfoWrapper>
-            <IntroData />
-            <GroupProgress />
+            <IntroData token={localStorage.getItem("jwtToken")}/>
+            {
+              getGroupProgress()
+            }
             <Stack spacing={4} direction="row" align="center" justify="center" marginTop="20px">
-              <SignUp />
+              <SignUp token={localStorage.getItem("jwtToken")} setToken={setToken}/>
             </Stack>
           </SideInfoWrapper>
         </SideInfo>

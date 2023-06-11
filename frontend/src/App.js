@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Menu />} />
           <Route path="/creategroup" element={<CreateGroup />} />
-          <Route path="/grouppage" element={<GroupPage />} />
+          <Route path="/grouppage" element={<GroupPage />}/>
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
