@@ -14,7 +14,7 @@ config = {
 }
 
 
-connection_pool = pooling.MySQLConnectionPool(pool_name="my_pool", pool_size=32, **config)
+connection_pool = pooling.MySQLConnectionPool(pool_name="my_pool", pool_size=12, **config)
 
 
 def get_connection(connection_pool):
