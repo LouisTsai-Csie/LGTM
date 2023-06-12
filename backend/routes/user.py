@@ -27,3 +27,15 @@ async def user_status_route(Authorization: Annotated[Union[str, None], Header()]
     result = await user_status_controller(Authorization)
     return result
 
+@router.post('/submission')
+async def user_submission_route():
+    return 'OK'
+
+@router.post('/progress')
+async def user_progress_route(
+    data: dict,
+    Authorization: Annotated[Union[str, None], Header()] = None
+):
+    result = await user_progress_controller(data, Authorization)
+    return result
+

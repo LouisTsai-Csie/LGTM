@@ -116,7 +116,12 @@ async def user_status_controller(token: str):
             "status": res
         }
     }
-
     return response
+
+async def user_progress_controller(data: dict, token: str):
+    payload = decode_jwt_token(token)
+    acNum, subNum = data['acNum'], data['subNum']
+    await update_user_progress(payload['email'], acNum, subNum)
+    return {"success": "OK"}
 
     

@@ -77,3 +77,24 @@ async def get_user_status(email: str):
     connection.close()
     # reconnect(connection_pool)
     return result
+
+async def update_user_progress(email: str, acNum: int, subNum: int):
+    connection = get_connection(connection_pool)
+    cursor = connection.cursor()
+
+    query = "UPDATE user \
+             SET acNum = %s, \
+             subNum = %s \
+             WHERE email=%s; \
+    "
+    values = [acNum, subNum, email]
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Exception as e:
+        print(e)
+        connection.rollback()
+    cursor.close()
+    connection.close()
+    # reconnect(connection_pool)
+    return
