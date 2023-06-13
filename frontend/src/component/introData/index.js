@@ -4,8 +4,6 @@ import {
     CardBody,
     Text,
     Avatar,
-    Code,
-    Badge,
 } from '@chakra-ui/react';
 
 import {
@@ -20,9 +18,9 @@ import {
 
 function IntroData(props) {
     const [name, setName] = useState('');
-    const [groupNum, setGroupNum] = useState('');
-    const [code, setCode] = useState("print('Hello world!')");
-    const [language, setLanguage] = useState(['python', 'C', 'C++']);
+    const [groupNum, setGroupNum] = useState('2');
+    const [code, setCode] = useState("");
+    const [language, setLanguage] = useState("");
     const [image, setImage] = useState('https://bit.ly/dan-abramov');
     const [token, setToken] = useState(null);
 
@@ -35,10 +33,12 @@ function IntroData(props) {
         if(result.detail) return;
         
         console.log(result.data.data.user)
-        const {name, pickLink} = result.data.data.user;
+        const {name, pickLink, acNum, subNum} = result.data.data.user;
         console.log(pickLink);
         setName(name);
         setImage(pickLink);
+        setCode(acNum);
+        setLanguage(subNum);
         return;
     }
 
@@ -48,17 +48,6 @@ function IntroData(props) {
         getUserProfile(props.token);
     }, [props.token]);
 
-    function getLanguageBadge() {
-        if(token===null) return;
-        const color = ['green', 'blackAlpha', 'orange', 'teal'];
-        return language.map((item, index)=>(
-            <Badge colorScheme={
-                color[index]
-            }>
-                {item}
-            </Badge>
-        ));
-    }
 
     return (
     <Stack direction='column' align='center' marginTop="10px">
@@ -67,13 +56,8 @@ function IntroData(props) {
         <Avatar name='Dan Abrahmov' src={image} marginBottom="10px"/>
         <Text marginBottom="5px">{token===null? "Please Login First":"Name: "+name}</Text>
         <Text marginBottom="5px">{token===null? "":"Group Number: "+groupNum}</Text>
-        <Code marginBottom="5px">{token===null? "":code}</Code>
-        <Text marginBottom="10px">{token===null? "": "language"}</Text>
-        <Stack spacing={4} direction='row' wrap="wrap">
-            {
-                getLanguageBadge()
-            }
-        </Stack>
+        <Text marginBottom="5px">{token===null? "":"AC Num: " + code}</Text>
+        <Text marginBottom="5px">{token===null? "":"Total Num: " + language}</Text>
         </CardBody>
     </Card>
     </Stack>

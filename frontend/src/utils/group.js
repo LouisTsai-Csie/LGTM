@@ -1,6 +1,6 @@
 import axios from "axios";
 const version = 'v1.0'
-const address = `http://127.0.0.1:8000/api/${version}`;
+const address = `http://35.73.169.207:8000/api/${version}`;
 
 export const getMyGroup = async(jwt) => {
     try {
@@ -62,7 +62,7 @@ export const createGroup = async(
     description,
     jwt) => {
     try {
-        let result = await axios.post(`http://localhost:8000/api/v1.0/group/create`, {
+        let result = await axios.post(`${address}/group/create`, {
             headers: {'Authorization': 'Bearer '+jwt},
             data: {
                 name: name, 

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const version = 'v1.0'
-const address = `http://127.0.0.1:8000/api/${version}`;
+const address = `http://35.73.169.207:8000/api/${version}`;
 
 export const userSignUp = async(Data) => {
     const {name, email, password, picLink} = Data;

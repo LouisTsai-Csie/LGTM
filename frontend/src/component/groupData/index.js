@@ -71,8 +71,8 @@ function GroupData(props) {
 
             <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay
-                bg='blackAlpha.300'
-                backdropFilter='blur(10px) hue-rotate(90deg)'
+                    bg='blackAlpha.300'
+                    backdropFilter='blur(10px) hue-rotate(90deg)'
                 />
                 <ModalContent>
                 <ModalHeader>Are you sure to leave the group</ModalHeader>
