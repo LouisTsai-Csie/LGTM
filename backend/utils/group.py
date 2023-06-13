@@ -193,3 +193,23 @@ async def get_group_info(ticket: str):
     connection.close()
     # reconnect(connection_pool)
     return result
+
+async def group_update(email: str, ticket: str):
+    connection = get_connection(connection_pool)
+    cursor = connection.cursor()
+    query = "UPDATE status SET \
+        solved = solved + 1, \
+        totalSolved = totalSolved + 1\
+        WHERE uid=%s AND ticket=%s;\
+    "
+    values = [email, ticket]
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Exception as e:
+        print(e)
+        connection.rollback()
+    cursor.close()
+    connection.close()
+    # reconnect(connection_pool)
+    return

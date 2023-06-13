@@ -157,3 +157,9 @@ async def get_group_info_controller(data: dict):
         }
     }
     return response
+
+async def group_update_controller(data: dict, token: str):
+    payload = decode_jwt_token(token)
+    ticket = data['ticket']
+    await group_update(payload['email'], ticket)
+    return {"Success": "Ok"}

@@ -49,7 +49,7 @@ async def user_sign_in(user_data: dict):
 
     # get user password
     result = await get_user_password(data.email)
-    uid, name, email, password, picLink = result
+    uid, name, email, password, picLink, acNum, subNum = result
 
     # validate user password
     if not bcrypt.checkpw(data.password.encode('utf-8'), password.encode('utf-8')):
@@ -67,7 +67,9 @@ async def user_sign_in(user_data: dict):
                 "id": uid,
                 "name": name,
                 "email": email,
-                "picLink": picLink
+                "picLink": picLink,
+                "acNum": acNum,
+                "subNum": subNum
             }
         }
     }
@@ -83,14 +85,16 @@ async def user_profile(authorization: str = Header(None)):
         raise HTTPException(status_code=400, detail="Invalid JWT Token")
     
     result = await get_user(payload["email"])
-    uid, name, email, picLink = result
+    uid, name, email, picLink, acNum, subNum = result
     response = {
         "data": {
             "user": {
                 "id": uid,
                 "name": name,
                 "email": email,
-                "pickLink": picLink
+                "pickLink": picLink,
+                "acNum": acNum,
+                "subNum": subNum
             }
         }
     }
@@ -125,3 +129,7 @@ async def user_progress_controller(data: dict, token: str):
     return {"success": "OK"}
 
     
+async def user_number_controller(token: str):
+    payload = decode_jwt_token(token)
+    await update_user_number(payload['email'])
+    return {"success": "OK"}

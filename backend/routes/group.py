@@ -52,3 +52,11 @@ async def group_info_router(
 ):
     result = await get_group_info_controller(data)
     return result
+
+@router.post('/update')
+async def group_update_router(
+    data: dict,
+    Authorization: Annotated[Union[str, None], Header()] = None
+):
+    result = await group_update_controller(data, Authorization)
+    return result

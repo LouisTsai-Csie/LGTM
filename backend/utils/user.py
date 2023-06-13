@@ -20,7 +20,7 @@ async def create_user(name: str, email: str, password: str, picLink: str):
     return last_insert_id
 
 async def get_user_password(email: str):
-    query = "SELECT id, name, email, password, picLink FROM user WHERE email=%s"
+    query = "SELECT id, name, email, password, picLink, acNum, subNum FROM user WHERE email=%s"
     values = [email]
     connection = get_connection(connection_pool)
     cursor = connection.cursor()
@@ -37,7 +37,8 @@ async def get_user_password(email: str):
     return result
 
 async def get_user(email: str):
-    query = "SELECT id, name, email, picLink FROM user WHERE email=%s"
+    print(email)
+    query = "SELECT id, name, email, picLink, acNum, subNum FROM user WHERE email=%s"
     values = [email]
     connection = get_connection(connection_pool)
     cursor = connection.cursor()
@@ -46,6 +47,7 @@ async def get_user(email: str):
         result = cursor.fetchone()
         connection.commit()
     except Exception as e:
+        print(e)
         connection.rollback()
         raise HTTPException(status_code=400, detail="Invalid Email")
     cursor.close()
@@ -88,6 +90,26 @@ async def update_user_progress(email: str, acNum: int, subNum: int):
              WHERE email=%s; \
     "
     values = [acNum, subNum, email]
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Exception as e:
+        print(e)
+        connection.rollback()
+    cursor.close()
+    connection.close()
+    # reconnect(connection_pool)
+    return
+
+async def update_user_number(email: str):
+    connection = get_connection(connection_pool)
+    cursor = connection.cursor()
+    query = "UPDATE user SET \
+        subNum = subNum + 1, \
+        acNum = acNum + 1\
+        where email=%s;\
+    "
+    values = [email]
     try:
         cursor.execute(query, values)
         connection.commit()

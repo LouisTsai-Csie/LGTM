@@ -39,3 +39,9 @@ async def user_progress_route(
     result = await user_progress_controller(data, Authorization)
     return result
 
+@router.post('/update')
+async def user_update_route(
+    Authorization: Annotated[Union[str, None], Header()] = None
+):
+    result = await user_number_controller(Authorization)
+    return result

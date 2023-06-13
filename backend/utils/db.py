@@ -19,9 +19,3 @@ connection_pool = pooling.MySQLConnectionPool(pool_name="my_pool", pool_size=12,
 
 def get_connection(connection_pool):
     return connection_pool.get_connection()
-    try:
-        connection = connection_pool.get_connection()
-        return connection
-    except:
-        connection_pool = pooling.MySQLConnectionPool(pool_name="my_pool", pool_size=32, **config)
-        return get_connection()
